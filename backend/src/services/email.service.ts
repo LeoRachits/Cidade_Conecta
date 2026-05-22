@@ -43,19 +43,20 @@ function createTransporter() {
 
 function getPrefeituraRecipients(category: OccurrenceCategory): string[] {
   const base = [
-    process.env.EMAIL_PREFEITURA      ?? 'prefeitura@horizonte.ce.gov.br',
-    process.env.EMAIL_INFRAESTRUTURA  ?? 'infraestrutura@horizonte.ce.gov.br',
+    process.env.EMAIL_PREFEITURA      ?? 'gabinete@horizonte.ce.gov.br',
+    process.env.EMAIL_INFRAESTRUTURA  ?? 'seinfra@horizonte.ce.gov.br',
   ]
-
-  // Secretaria de Meio Ambiente só recebe ocorrências de lixo
   if (category === OccurrenceCategory.GARBAGE) {
-    const meioAmbiente = process.env.EMAIL_MEIO_AMBIENTE ?? 'meioambiente@horizonte.ce.gov.br'
-    return [...base, meioAmbiente]
+    return [...base, process.env.EMAIL_MEIO_AMBIENTE ?? 'meioambiente@horizonte.ce.gov.br']
   }
-
+  if (category === OccurrenceCategory.WATER) {
+    return [...base, process.env.EMAIL_CAGECE ?? 'privacidadededados@cagece.com.br']
+  }
+  if (category === OccurrenceCategory.ENERGY) {
+    return [...base, process.env.EMAIL_ENEL ?? 'atendimento@enel.com.br']
+  }
   return base
 }
-
 // ─── Labels legíveis ─────────────────────────────────────────────────────────
 
 const CATEGORY_LABELS: Record<OccurrenceCategory, string> = {

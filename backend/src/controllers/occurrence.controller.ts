@@ -8,8 +8,8 @@ const createSchema = z.object({
   title: z.string().min(5, 'Título deve ter pelo menos 5 caracteres').max(100),
   description: z.string().min(10, 'Descrição muito curta').max(1000),
   category: z.nativeEnum(OccurrenceCategory),
-  latitude: z.number().min(-33).max(5),
-  longitude: z.number().min(-74).max(-34),
+  latitude: z.coerce.number().min(-33).max(5),
+longitude: z.coerce.number().min(-74).max(-34),
   address: z.string().max(200).optional(),
   neighborhood: z.string().max(100).optional(),
 })

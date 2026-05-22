@@ -30,9 +30,10 @@ enum OccurrenceCategory {
   LIGHTING    // Iluminação pública
   GARBAGE     // Lixo irregular
   FLOODING    // Alagamentos
+  WATER       // Falta de água (Cagece)
+  ENERGY      // Falta de luz (Enel)
   OTHER       // Outros
 }
-
 // ─── MODELS ───────────────────────────────────────────────────
 
 model User {

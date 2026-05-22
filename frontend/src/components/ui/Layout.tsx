@@ -18,7 +18,7 @@ export default function Layout() {
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <NavLink to="/" className="flex items-center gap-2 font-bold text-lg">
             <span className="text-2xl">🏙️</span>
-            <span>CidadeAlerta CE</span>
+            <span>Cidade Conectada CE</span>
           </NavLink>
 
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
@@ -65,7 +65,7 @@ export default function Layout() {
 
       {/* Footer */}
       <footer className="bg-blue-900 text-blue-300 text-center py-3 text-xs mt-auto">
-        CidadeAlerta CE © 2026 — Horizonte, CE | Projeto Acadêmico — Desafios do Ciberespaço
+        Cidade Conectada CE © 2026 — Horizonte, CE | Projeto Acadêmico — Desafios do Ciberespaço
       </footer>
     </div>
   )

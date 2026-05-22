@@ -71,13 +71,14 @@ export interface AuthResponse {
 }
 
 export const CATEGORY_LABELS: Record<OccurrenceCategory, string> = {
-  ROAD: '🛣️ Via / Buraco',
-  LIGHTING: '💡 Iluminação',
-  GARBAGE: '🗑️ Lixo',
+  ROAD:     '🛣️ Via / Buraco',
+  LIGHTING: '💡 Iluminação Pública',
+  GARBAGE:  '🗑️ Lixo Irregular',
   FLOODING: '🌊 Alagamento',
-  OTHER: '📌 Outro',
+  WATER:    '💧 Falta de Água (Cagece)',
+  ENERGY:   '⚡ Falta de Luz (Enel)',
+  OTHER:    '📌 Outro',
 }
-
 export const STATUS_LABELS: Record<OccurrenceStatus, string> = {
   OPEN: 'Aberto',
   UNDER_REVIEW: 'Em análise',

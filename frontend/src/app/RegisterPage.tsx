@@ -45,7 +45,7 @@ export default function RegisterPage() {
         <div className="text-center mb-8">
           <div className="text-5xl mb-3">🏙️</div>
           <h1 className="text-2xl font-bold text-blue-900">Criar Conta</h1>
-          <p className="text-gray-500 text-sm mt-1">CidadeAlerta CE — Horizonte</p>
+          <p className="text-gray-500 text-sm mt-1">Cidade Conectada CE — Horizonte</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
