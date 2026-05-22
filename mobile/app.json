@@ -1,0 +1,58 @@
+{
+  "expo": {
+    "name": "CidadeAlerta CE",
+    "slug": "cidade-alerta-ce",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1A3560"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "br.gov.horizonte.cidadealerta",
+      "infoPlist": {
+        "NSCameraUsageDescription": "O CidadeAlerta CE precisa da câmera para fotografar os problemas urbanos.",
+        "NSPhotoLibraryUsageDescription": "O CidadeAlerta CE precisa acessar sua galeria para selecionar fotos.",
+        "NSLocationWhenInUseUsageDescription": "O CidadeAlerta CE usa sua localização para georreferenciar a ocorrência."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1A3560"
+      },
+      "package": "br.gov.horizonte.cidadealerta",
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE"
+      ],
+      "googleServicesFile": "./google-services.json"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "name": "CidadeAlerta CE",
+      "shortName": "CidadeAlerta",
+      "description": "Plataforma de denúncias urbanas — Horizonte CE",
+      "themeColor": "#1A3560",
+      "backgroundColor": "#F0F4FB"
+    },
+    "plugins": [
+      ["expo-camera", { "cameraPermission": "Permite fotografar problemas urbanos." }],
+      ["expo-location", { "locationWhenInUsePermission": "Usada para localizar a ocorrência no mapa." }],
+      "expo-secure-store"
+    ],
+    "extra": {
+      "eas": { "projectId": "SEU_EAS_PROJECT_ID_AQUI" }
+    }
+  }
+}

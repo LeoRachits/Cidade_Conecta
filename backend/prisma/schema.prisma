@@ -1,0 +1,107 @@
+// prisma/schema.prisma
+// CidadeAlerta CE — Schema do banco de dados
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── ENUMS ────────────────────────────────────────────────────
+
+enum UserRole {
+  CITIZEN
+  ADMIN
+}
+
+enum OccurrenceStatus {
+  OPEN
+  UNDER_REVIEW
+  IN_PROGRESS
+  RESOLVED
+  REJECTED
+}
+
+enum OccurrenceCategory {
+  ROAD        // Vias / buracos / calçadas
+  LIGHTING    // Iluminação pública
+  GARBAGE     // Lixo irregular
+  FLOODING    // Alagamentos
+  OTHER       // Outros
+}
+
+// ─── MODELS ───────────────────────────────────────────────────
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  password     String
+  phone        String?
+  role         UserRole @default(CITIZEN)
+  avatarUrl    String?  @map("avatar_url")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  deletedAt    DateTime? @map("deleted_at")
+
+  occurrences  Occurrence[]
+  refreshTokens RefreshToken[]
+  statusHistory StatusHistory[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String   @map("user_id")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  revokedAt DateTime? @map("revoked_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+model Occurrence {
+  id          String              @id @default(cuid())
+  title       String
+  description String
+  category    OccurrenceCategory
+  status      OccurrenceStatus    @default(OPEN)
+  latitude    Float
+  longitude   Float
+  address     String?
+  neighborhood String?
+  photoUrl    String?             @map("photo_url")
+  userId      String              @map("user_id")
+  createdAt   DateTime            @default(now()) @map("created_at")
+  updatedAt   DateTime            @updatedAt @map("updated_at")
+
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  statusHistory StatusHistory[]
+
+  @@index([status])
+  @@index([category])
+  @@index([userId])
+  @@index([createdAt])
+  @@map("occurrences")
+}
+
+model StatusHistory {
+  id           String           @id @default(cuid())
+  occurrenceId String           @map("occurrence_id")
+  status       OccurrenceStatus
+  comment      String?
+  changedById  String           @map("changed_by_id")
+  createdAt    DateTime         @default(now()) @map("created_at")
+
+  occurrence Occurrence @relation(fields: [occurrenceId], references: [id], onDelete: Cascade)
+  changedBy  User       @relation(fields: [changedById], references: [id])
+
+  @@map("status_history")
+}
