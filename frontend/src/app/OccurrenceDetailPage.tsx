@@ -68,12 +68,14 @@ export default function OccurrenceDetailPage() {
         </p>
 
         {occurrence.photoUrl && (
-          <img
-            src={`${import.meta.env.VITE_API_URL?.replace('/api', '')}${occurrence.photoUrl}`}
-            alt="Foto da ocorrência"
-            className="mt-4 rounded-xl w-full object-cover max-h-64"
-          />
-        )}
+  <img
+    src={occurrence.photoUrl.startsWith('http')
+      ? occurrence.photoUrl
+      : `${import.meta.env.VITE_API_URL?.replace('/api', '')}${occurrence.photoUrl}`}
+    alt="Foto da ocorrência"
+    className="mt-4 rounded-xl w-full object-cover max-h-64"
+  />
+)}
       </div>
 
       {/* Admin: Atualizar status */}
