@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "CidadeAlerta CE",
+    "name": "Cidade Conectada CE",
     "slug": "cidade-alerta-ce",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -10,11 +10,11 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "br.gov.horizonte.cidadealerta",
+      "bundleIdentifier": "br.gov.horizonte.Cidade Conectada",
       "infoPlist": {
-        "NSCameraUsageDescription": "O CidadeAlerta CE precisa da câmera para fotografar os problemas urbanos.",
-        "NSPhotoLibraryUsageDescription": "O CidadeAlerta CE precisa acessar sua galeria para selecionar fotos.",
-        "NSLocationWhenInUseUsageDescription": "O CidadeAlerta CE usa sua localização para georreferenciar a ocorrência."
+        "NSCameraUsageDescription": "O Cidade Conectada CE precisa da câmera para fotografar os problemas urbanos.",
+        "NSPhotoLibraryUsageDescription": "O Cidade Conectada CE precisa acessar sua galeria para selecionar fotos.",
+        "NSLocationWhenInUseUsageDescription": "O Cidade Conectada CE usa sua localização para georreferenciar a ocorrência."
       }
     },
     "android": {
@@ -22,7 +22,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#1A3560"
       },
-      "package": "br.gov.horizonte.cidadealerta",
+      "package": "br.gov.horizonte.Cidade Conectada",
       "permissions": [
         "CAMERA",
         "READ_EXTERNAL_STORAGE",
@@ -36,8 +36,8 @@
     },
     "web": {
       "favicon": "./assets/favicon.png",
-      "name": "CidadeAlerta CE",
-      "shortName": "CidadeAlerta",
+      "name": "Cidade Conectada CE",
+      "shortName": "Cidade Conectada",
       "description": "Plataforma de denúncias urbanas — Horizonte CE",
       "themeColor": "#1A3560",
       "backgroundColor": "#F0F4FB"

@@ -10,13 +10,15 @@ import * as ImagePicker from 'expo-image-picker'
 import * as Location from 'expo-location'
 import api from '../services/api'
 
-type Category = 'ROAD' | 'LIGHTING' | 'GARBAGE' | 'FLOODING' | 'OTHER'
+type Category = 'ROAD' | 'LIGHTING' | 'GARBAGE' | 'FLOODING' | 'WATER' | 'ENERGY' | 'OTHER'
 
 const CATEGORIES: { value: Category; label: string; icon: string }[] = [
   { value: 'ROAD',     label: 'Via / Buraco',   icon: '🛣️' },
   { value: 'LIGHTING', label: 'Iluminação',      icon: '💡' },
   { value: 'GARBAGE',  label: 'Lixo',            icon: '🗑️' },
   { value: 'FLOODING', label: 'Alagamento',      icon: '🌊' },
+  { value: 'WATER',    label: 'Falta de Água',   icon: '💧' },
+  { value: 'ENERGY',   label: 'Falta de Luz',    icon: '⚡' },
   { value: 'OTHER',    label: 'Outro',            icon: '📌' },
 ]
 

@@ -13,9 +13,10 @@ import path from 'path'
 const app = express()
 
 // ─── Segurança ───────────────────────────────────────────────
-app.use(helmet())
 app.use(cors({
-  origin: (process.env.ALLOWED_ORIGINS ?? 'http://localhost:5173').split(','),
+  origin: process.env.NODE_ENV === 'development'
+    ? true
+    : (process.env.ALLOWED_ORIGINS ?? 'http://localhost:5173').split(','),
   methods: ['GET', 'POST', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,

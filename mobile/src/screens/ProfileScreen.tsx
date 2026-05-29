@@ -35,7 +35,7 @@ export default function ProfileScreen() {
 
       {/* About */}
       <View style={s.card}>
-        <Text style={s.cardTitle}>Sobre o CidadeAlerta CE</Text>
+        <Text style={s.cardTitle}>Sobre o Cidade Conectada CE</Text>
         <Text style={s.about}>Plataforma de denúncias e acompanhamento de problemas urbanos em Horizonte – CE. Projeto Acadêmico — Desafios do Ciberespaço 2026.</Text>
         <Text style={s.about}>Repositório: github.com/LeoRachits/Cidade_Conecta</Text>
       </View>

@@ -25,16 +25,22 @@ export default function LoginScreen({ navigation }: any) {
   }
 
   return (
-    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
-        {/* Header */}
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scroll}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.header}>
           <Text style={styles.emoji}>🏙️</Text>
-          <Text style={styles.appName}>CidadeAlerta CE</Text>
+          <Text style={styles.appName}>Cidade Conectada CE</Text>
           <Text style={styles.subtitle}>Horizonte — Ceará</Text>
         </View>
 
-        {/* Card */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Entrar na sua conta</Text>
 
@@ -46,6 +52,7 @@ export default function LoginScreen({ navigation }: any) {
             keyboardType="email-address"
             autoCapitalize="none"
             autoCorrect={false}
+            returnKeyType="next"
           />
 
           <Text style={styles.label}>Senha</Text>
@@ -54,6 +61,8 @@ export default function LoginScreen({ navigation }: any) {
             value={password} onChangeText={setPassword}
             placeholder="••••••••"
             secureTextEntry
+            returnKeyType="done"
+            onSubmitEditing={handleLogin}
           />
 
           <TouchableOpacity
@@ -80,10 +89,10 @@ export default function LoginScreen({ navigation }: any) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#1A3560' },
-  scroll: { flexGrow: 1, justifyContent: 'center', padding: 24 },
+  scroll: { flexGrow: 1, justifyContent: 'center', padding: 24, paddingVertical: 60 },
   header: { alignItems: 'center', marginBottom: 32 },
   emoji: { fontSize: 56, marginBottom: 8 },
-  appName: { fontSize: 28, fontWeight: 'bold', color: '#fff' },
+  appName: { fontSize: 26, fontWeight: 'bold', color: '#fff', textAlign: 'center' },
   subtitle: { fontSize: 14, color: '#BDD3F5', marginTop: 4 },
   card: { backgroundColor: '#fff', borderRadius: 20, padding: 28, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 12, elevation: 8 },
   cardTitle: { fontSize: 20, fontWeight: 'bold', color: '#1A3560', marginBottom: 24, textAlign: 'center' },
