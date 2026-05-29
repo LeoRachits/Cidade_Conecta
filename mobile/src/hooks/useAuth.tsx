@@ -4,12 +4,20 @@ import * as SecureStore from 'expo-secure-store'
 import api from '../services/api'
 
 interface User {
-  id: string; name: string; email: string
-  role: 'CITIZEN' | 'ADMIN'
+  id: string
+  name: string
+  email: string
+  username?: string
+  role: 'CITIZEN' | 'ADMIN' | 'MASTER'
+  mustChangePassword?: boolean
 }
+
 interface AuthCtx {
-  user: User | null; loading: boolean; isAdmin: boolean
-  login(email: string, password: string): Promise<void>
+  user: User | null
+  loading: boolean
+  isAdmin: boolean
+  isMaster: boolean
+  login(loginValue: string, password: string): Promise<void>
   logout(): Promise<void>
 }
 
@@ -35,8 +43,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })
   }, [])
 
-  async function login(email: string, password: string) {
-    const { data } = await api.post('/auth/login', { email, password })
+  async function login(loginValue: string, password: string) {
+    const { data } = await api.post('/auth/login', { login: loginValue, password })
     await SecureStore.setItemAsync('accessToken', data.accessToken)
     await SecureStore.setItemAsync('refreshToken', data.refreshToken)
     setUser(data.user)
@@ -49,7 +57,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <Ctx.Provider value={{ user, loading, isAdmin: user?.role === 'ADMIN', login, logout }}>
+    <Ctx.Provider value={{
+      user,
+      loading,
+      isAdmin: user?.role === 'ADMIN' || user?.role === 'MASTER',
+      isMaster: user?.role === 'MASTER',
+      login,
+      logout,
+    }}>
       {children}
     </Ctx.Provider>
   )
