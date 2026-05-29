@@ -3,7 +3,7 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 
 export default function Layout() {
-  const { user, logout, isAdmin } = useAuth()
+  const { user, logout, isAdmin, isMaster } = useAuth()
   const navigate = useNavigate()
 
   function handleLogout() {
@@ -20,7 +20,6 @@ export default function Layout() {
             <span className="text-2xl">🏙️</span>
             <span>Cidade Conectada CE</span>
           </NavLink>
-
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
             <NavLink to="/" end className={({ isActive }) =>
               isActive ? 'text-blue-300 border-b-2 border-blue-300 pb-0.5' : 'hover:text-blue-300 transition-colors'
@@ -44,8 +43,14 @@ export default function Layout() {
                 ⚙️ Painel Admin
               </NavLink>
             )}
+            {isMaster && (
+              <NavLink to="/usuarios" className={({ isActive }) =>
+                isActive ? 'text-purple-300 border-b-2 border-purple-300 pb-0.5' : 'text-purple-200 hover:text-purple-300 transition-colors'
+              }>
+                👥 Usuários
+              </NavLink>
+            )}
           </nav>
-
           <div className="flex items-center gap-3 text-sm">
             <span className="text-blue-200 hidden md:block">Olá, {user?.name.split(' ')[0]}</span>
             <button
@@ -57,12 +62,10 @@ export default function Layout() {
           </div>
         </div>
       </header>
-
       {/* Content */}
       <main className="flex-1 max-w-6xl mx-auto w-full px-4 py-6">
         <Outlet />
       </main>
-
       {/* Footer */}
       <footer className="bg-blue-900 text-blue-300 text-center py-3 text-xs mt-auto">
         Cidade Conectada CE © 2026 — Horizonte, CE | Projeto Acadêmico — Desafios do Ciberespaço

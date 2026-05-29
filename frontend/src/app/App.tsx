@@ -1,15 +1,15 @@
-// src/app/App.tsx
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { AuthProvider, useAuth } from '../hooks/useAuth'
-import LoginPage from './LoginPage'
-import RegisterPage from './RegisterPage'
-import ChangePasswordPage from './ChangePasswordPage'
-import HomePage from './HomePage'
-import NewOccurrencePage from './NewOccurrencePage'
-import MyOccurrencesPage from './MyOccurrencesPage'
-import OccurrenceDetailPage from './OccurrenceDetailPage'
-import AdminDashboardPage from './AdminDashboardPage'
-import Layout from '../components/ui/Layout'
+﻿import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
+import { AuthProvider, useAuth } from "../hooks/useAuth"
+import LoginPage from "./LoginPage"
+import RegisterPage from "./RegisterPage"
+import ChangePasswordPage from "./ChangePasswordPage"
+import HomePage from "./HomePage"
+import NewOccurrencePage from "./NewOccurrencePage"
+import MyOccurrencesPage from "./MyOccurrencesPage"
+import OccurrenceDetailPage from "./OccurrenceDetailPage"
+import AdminDashboardPage from "./AdminDashboardPage"
+import UsersPage from "./UsersPage"
+import Layout from "../components/ui/Layout"
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -25,6 +25,15 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
   if (!user) return <Navigate to="/login" replace />
   if (user.mustChangePassword) return <Navigate to="/trocar-senha" replace />
   if (!isAdmin) return <Navigate to="/" replace />
+  return <>{children}</>
+}
+
+function MasterRoute({ children }: { children: React.ReactNode }) {
+  const { user, loading, isMaster } = useAuth()
+  if (loading) return <div className="flex items-center justify-center h-screen text-gray-500">Carregando...</div>
+  if (!user) return <Navigate to="/login" replace />
+  if (user.mustChangePassword) return <Navigate to="/trocar-senha" replace />
+  if (!isMaster) return <Navigate to="/" replace />
   return <>{children}</>
 }
 
@@ -47,6 +56,7 @@ function AppRoutes() {
         <Route path="minhas-ocorrencias" element={<MyOccurrencesPage />} />
         <Route path="ocorrencias/:id" element={<OccurrenceDetailPage />} />
         <Route path="admin" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
+        <Route path="usuarios" element={<MasterRoute><UsersPage /></MasterRoute>} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
