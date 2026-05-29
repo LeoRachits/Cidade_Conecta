@@ -14,6 +14,8 @@ export async function getDashboard(req: Request, res: Response, next: NextFuncti
       rejectedCount,
       byCategory,
       recentOccurrences,
+      totalUsers,
+      totalAdmins,
     ] = await prisma.$transaction([
       prisma.occurrence.count(),
       prisma.occurrence.count({ where: { status: OccurrenceStatus.OPEN } }),
@@ -30,6 +32,8 @@ export async function getDashboard(req: Request, res: Response, next: NextFuncti
         orderBy: { createdAt: 'desc' },
         include: { user: { select: { name: true } } },
       }),
+      prisma.user.count(),
+      prisma.user.count({ where: { role: 'ADMIN' } }),
     ])
 
     res.json({
@@ -44,6 +48,9 @@ export async function getDashboard(req: Request, res: Response, next: NextFuncti
           totalOccurrences > 0
             ? Math.round((resolvedCount / totalOccurrences) * 100)
             : 0,
+        totalUsers,
+        totalCitizens: totalUsers - totalAdmins,
+        totalAdmins,
       },
       byCategory: byCategory.map((item) => ({
         category: item.category,

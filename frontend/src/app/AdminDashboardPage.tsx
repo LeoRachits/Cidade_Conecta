@@ -13,6 +13,9 @@ interface DashboardData {
     resolved: number
     rejected: number
     resolutionRate: number
+    totalUsers: number
+    totalCitizens: number
+    totalAdmins: number
   }
   byCategory: { category: string; count: number }[]
   recentOccurrences: Occurrence[]
@@ -33,12 +36,14 @@ export default function AdminDashboardPage() {
   if (!data) return <div className="text-center py-20 text-red-400">Erro ao carregar dados</div>
 
   const summaryCards = [
-    { label: 'Total', value: data.summary.total, color: 'bg-gray-50 border-gray-200 text-gray-800' },
+    { label: 'Total Ocorrências', value: data.summary.total, color: 'bg-gray-50 border-gray-200 text-gray-800' },
     { label: 'Abertos', value: data.summary.open, color: 'bg-red-50 border-red-200 text-red-800' },
     { label: 'Em análise', value: data.summary.underReview, color: 'bg-yellow-50 border-yellow-200 text-yellow-800' },
     { label: 'Em andamento', value: data.summary.inProgress, color: 'bg-blue-50 border-blue-200 text-blue-800' },
     { label: 'Resolvidos', value: data.summary.resolved, color: 'bg-green-50 border-green-200 text-green-800' },
     { label: 'Taxa Resolução', value: `${data.summary.resolutionRate}%`, color: 'bg-purple-50 border-purple-200 text-purple-800' },
+    { label: '👥 Usuários', value: data.summary.totalUsers, color: 'bg-indigo-50 border-indigo-200 text-indigo-800' },
+    { label: 'Cidadãos', value: data.summary.totalCitizens, color: 'bg-teal-50 border-teal-200 text-teal-800' },
   ]
 
   return (
@@ -46,7 +51,7 @@ export default function AdminDashboardPage() {
       <h1 className="text-xl font-bold text-gray-800">⚙️ Painel Administrativo</h1>
 
       {/* Summary */}
-      <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+      <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
         {summaryCards.map(({ label, value, color }) => (
           <div key={label} className={`${color} border rounded-xl p-3 text-center`}>
             <div className="text-2xl font-bold">{value}</div>

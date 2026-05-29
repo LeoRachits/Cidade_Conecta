@@ -6,9 +6,11 @@ import { User, AuthResponse } from '../types'
 interface AuthContextType {
   user: User | null
   loading: boolean
-  login: (email: string, password: string) => Promise<void>
+  login: (login: string, password: string) => Promise<User>
   logout: () => void
+  refreshUser: () => Promise<void>
   isAdmin: boolean
+  isMaster: boolean
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
@@ -32,11 +34,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  async function login(email: string, password: string) {
-    const { data } = await api.post<AuthResponse>('/auth/login', { email, password })
+  async function login(loginValue: string, password: string): Promise<User> {
+    const { data } = await api.post<AuthResponse>('/auth/login', { login: loginValue, password })
     localStorage.setItem('accessToken', data.accessToken)
     localStorage.setItem('refreshToken', data.refreshToken)
     setUser(data.user)
+    return data.user
+  }
+
+  async function refreshUser() {
+    const { data } = await api.get<User>('/auth/me')
+    setUser(data)
   }
 
   function logout() {
@@ -46,7 +54,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, isAdmin: user?.role === 'ADMIN' }}>
+    <AuthContext.Provider value={{
+      user,
+      loading,
+      login,
+      logout,
+      refreshUser,
+      isAdmin: user?.role === 'ADMIN' || user?.role === 'MASTER',
+      isMaster: user?.role === 'MASTER',
+    }}>
       {children}
     </AuthContext.Provider>
   )

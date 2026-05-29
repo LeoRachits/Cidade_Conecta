@@ -1,10 +1,12 @@
 // mobile/App.tsx
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Text, ActivityIndicator, View } from 'react-native'
+import * as SecureStore from 'expo-secure-store'
 import { AuthProvider, useAuth } from './src/hooks/useAuth'
+import OnboardingScreen from './src/screens/OnboardingScreen'
 import LoginScreen from './src/screens/LoginScreen'
 import RegisterScreen from './src/screens/RegisterScreen'
 import HomeScreen from './src/screens/HomeScreen'
@@ -47,7 +49,7 @@ function TabNavigator() {
   )
 }
 
-function RootNavigator() {
+function RootNavigator({ showOnboarding, onOnboardingDone }: { showOnboarding: boolean; onOnboardingDone: () => void }) {
   const { user, loading } = useAuth()
 
   if (loading) {
@@ -56,6 +58,10 @@ function RootNavigator() {
         <ActivityIndicator size="large" color="#ffffff" />
       </View>
     )
+  }
+
+  if (showOnboarding && !user) {
+    return <OnboardingScreen onDone={onOnboardingDone} />
   }
 
   return (
@@ -79,10 +85,28 @@ function RootNavigator() {
 }
 
 export default function App() {
+  const [showOnboarding, setShowOnboarding] = useState(false)
+  const [checking, setChecking] = useState(true)
+
+  useEffect(() => {
+    SecureStore.getItemAsync('onboardingDone').then((done) => {
+      setShowOnboarding(done !== 'true')
+      setChecking(false)
+    })
+  }, [])
+
+  if (checking) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#1A3560' }}>
+        <ActivityIndicator size="large" color="#ffffff" />
+      </View>
+    )
+  }
+
   return (
     <AuthProvider>
       <NavigationContainer>
-        <RootNavigator />
+        <RootNavigator showOnboarding={showOnboarding} onOnboardingDone={() => setShowOnboarding(false)} />
       </NavigationContainer>
     </AuthProvider>
   )

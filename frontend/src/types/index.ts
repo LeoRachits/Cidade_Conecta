@@ -1,6 +1,5 @@
 // src/types/index.ts
-
-export type UserRole = 'CITIZEN' | 'ADMIN'
+export type UserRole = 'CITIZEN' | 'ADMIN' | 'MASTER'
 
 export type OccurrenceStatus =
   | 'OPEN'
@@ -14,14 +13,18 @@ export type OccurrenceCategory =
   | 'LIGHTING'
   | 'GARBAGE'
   | 'FLOODING'
+  | 'WATER'
+  | 'ENERGY'
   | 'OTHER'
 
 export interface User {
   id: string
   name: string
   email: string
+  username?: string
   phone?: string
   role: UserRole
+  mustChangePassword?: boolean
   avatarUrl?: string
   createdAt: string
   _count?: { occurrences: number }
@@ -79,6 +82,7 @@ export const CATEGORY_LABELS: Record<OccurrenceCategory, string> = {
   ENERGY:   '⚡ Falta de Luz (Enel)',
   OTHER:    '📌 Outro',
 }
+
 export const STATUS_LABELS: Record<OccurrenceStatus, string> = {
   OPEN: 'Aberto',
   UNDER_REVIEW: 'Em análise',
