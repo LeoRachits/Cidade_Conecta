@@ -12,9 +12,15 @@ import path from "path"
 const app = express()
 
 app.use(cors({
-  origin: process.env.NODE_ENV === "development"
-    ? true
-    : (process.env.ALLOWED_ORIGINS ?? "http://localhost:5173").split(","),
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true)
+    const allowed =
+      origin.includes("localhost") ||
+      origin.includes("127.0.0.1") ||
+      origin.endsWith(".vercel.app") ||
+      (process.env.ALLOWED_ORIGINS ?? "").split(",").includes(origin)
+    callback(null, allowed)
+  },
   methods: ["GET", "POST", "PATCH", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
