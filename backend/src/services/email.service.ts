@@ -64,6 +64,8 @@ const CATEGORY_LABELS: Record<OccurrenceCategory, string> = {
   LIGHTING: '💡 Iluminação Pública',
   GARBAGE:  '🗑️ Lixo Irregular',
   FLOODING: '🌊 Alagamento',
+  WATER:    '💧 Falta de Água (Cagece)',
+  ENERGY:   '⚡ Falta de Luz (Enel)',
   OTHER:    '📌 Outro',
 }
 

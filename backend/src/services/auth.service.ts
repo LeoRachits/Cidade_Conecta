@@ -1,10 +1,9 @@
-// src/services/auth.service.ts
-import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
-import { prisma } from '../config/prisma'
-import { AppError } from '../middleware/error-handler'
-import { UserRole } from '@prisma/client'
-import { JwtPayload } from '../middleware/auth'
+﻿import bcrypt from "bcryptjs"
+import jwt from "jsonwebtoken"
+import { prisma } from "../config/prisma"
+import { AppError } from "../middleware/error-handler"
+import { UserRole } from "@prisma/client"
+import { JwtPayload } from "../middleware/auth"
 
 interface RegisterInput {
   name: string
@@ -14,26 +13,26 @@ interface RegisterInput {
 }
 
 interface LoginInput {
-  login: string   // pode ser email OU username
+  login: string
   password: string
 }
 
 function generateTokens(userId: string, email: string, role: UserRole) {
   const payload: JwtPayload = { sub: userId, email, role }
-  const accessToken = jwt.sign(payload, process.env.JWT_SECRET!, {
-    expiresIn: process.env.JWT_EXPIRES_IN ?? '1h',
+  const accessToken = jwt.sign(payload, process.env.JWT_SECRET as string, {
+    expiresIn: (process.env.JWT_EXPIRES_IN ?? "1h") as any,
   })
   const refreshToken = jwt.sign(
     { sub: userId },
-    process.env.JWT_REFRESH_SECRET!,
-    { expiresIn: process.env.JWT_REFRESH_EXPIRES_IN ?? '7d' },
+    process.env.JWT_REFRESH_SECRET as string,
+    { expiresIn: (process.env.JWT_REFRESH_EXPIRES_IN ?? "7d") as any },
   )
   return { accessToken, refreshToken }
 }
 
 export async function register(input: RegisterInput) {
   const existing = await prisma.user.findUnique({ where: { email: input.email } })
-  if (existing) throw new AppError('E-mail já cadastrado', 409)
+  if (existing) throw new AppError("E-mail ja cadastrado", 409)
   const hashedPassword = await bcrypt.hash(input.password, 12)
   const user = await prisma.user.create({
     data: {
@@ -58,7 +57,6 @@ export async function register(input: RegisterInput) {
 
 export async function login(input: LoginInput) {
   const loginValue = input.login.trim()
-  // Procura por email OU username
   const user = await prisma.user.findFirst({
     where: {
       deletedAt: null,
@@ -68,9 +66,9 @@ export async function login(input: LoginInput) {
       ],
     },
   })
-  if (!user) throw new AppError('Usuário ou senha incorretos', 401)
+  if (!user) throw new AppError("Usuario ou senha incorretos", 401)
   const passwordMatch = await bcrypt.compare(input.password, user.password)
-  if (!passwordMatch) throw new AppError('Usuário ou senha incorretos', 401)
+  if (!passwordMatch) throw new AppError("Usuario ou senha incorretos", 401)
 
   const tokens = generateTokens(user.id, user.email, user.role)
   await prisma.refreshToken.create({
@@ -102,18 +100,17 @@ export async function changePassword(userId: string, newPassword: string) {
 }
 
 export async function refreshTokens(refreshToken: string) {
-  let payload: { sub: string }
   try {
-    payload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET!) as { sub: string }
+    jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET as string)
   } catch {
-    throw new AppError('Refresh token inválido', 401)
+    throw new AppError("Refresh token invalido", 401)
   }
   const stored = await prisma.refreshToken.findUnique({
     where: { token: refreshToken },
     include: { user: true },
   })
   if (!stored || stored.revokedAt || stored.expiresAt < new Date()) {
-    throw new AppError('Refresh token expirado ou revogado', 401)
+    throw new AppError("Refresh token expirado ou revogado", 401)
   }
   await prisma.refreshToken.update({
     where: { token: refreshToken },

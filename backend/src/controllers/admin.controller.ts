@@ -1,7 +1,6 @@
-// src/controllers/admin.controller.ts
-import { Request, Response, NextFunction } from 'express'
-import { OccurrenceStatus } from '@prisma/client'
-import { prisma } from '../config/prisma'
+﻿import { Request, Response, NextFunction } from "express"
+import { OccurrenceStatus } from "@prisma/client"
+import { prisma } from "../config/prisma"
 
 export async function getDashboard(req: Request, res: Response, next: NextFunction) {
   try {
@@ -24,16 +23,17 @@ export async function getDashboard(req: Request, res: Response, next: NextFuncti
       prisma.occurrence.count({ where: { status: OccurrenceStatus.RESOLVED } }),
       prisma.occurrence.count({ where: { status: OccurrenceStatus.REJECTED } }),
       prisma.occurrence.groupBy({
-        by: ['category'],
+        by: ["category"],
         _count: { id: true },
+        orderBy: { category: "asc" },
       }),
       prisma.occurrence.findMany({
         take: 10,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         include: { user: { select: { name: true } } },
       }),
       prisma.user.count(),
-      prisma.user.count({ where: { role: 'ADMIN' } }),
+      prisma.user.count({ where: { role: "ADMIN" } }),
     ])
 
     res.json({
@@ -54,7 +54,7 @@ export async function getDashboard(req: Request, res: Response, next: NextFuncti
       },
       byCategory: byCategory.map((item) => ({
         category: item.category,
-        count: item._count.id,
+        count: (item._count as { id: number }).id,
       })),
       recentOccurrences,
     })
@@ -66,7 +66,6 @@ export async function getDashboard(req: Request, res: Response, next: NextFuncti
 export async function getReport(req: Request, res: Response, next: NextFunction) {
   try {
     const { startDate, endDate } = req.query
-
     const where = {
       ...(startDate && endDate && {
         createdAt: {
@@ -75,19 +74,17 @@ export async function getReport(req: Request, res: Response, next: NextFunction)
         },
       }),
     }
-
     const occurrences = await prisma.occurrence.findMany({
       where,
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
       include: {
         user: { select: { name: true, email: true } },
         statusHistory: {
-          orderBy: { createdAt: 'asc' },
+          orderBy: { createdAt: "asc" },
           include: { changedBy: { select: { name: true } } },
         },
       },
     })
-
     res.json({ total: occurrences.length, data: occurrences })
   } catch (err) {
     next(err)
