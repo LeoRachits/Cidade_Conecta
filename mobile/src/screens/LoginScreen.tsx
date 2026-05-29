@@ -49,6 +49,7 @@ export default function LoginScreen({ navigation }: any) {
             style={styles.input}
             value={email} onChangeText={setEmail}
             placeholder="seu@email.com"
+            placeholderTextColor="#999"
             keyboardType="email-address"
             autoCapitalize="none"
             autoCorrect={false}
@@ -60,6 +61,7 @@ export default function LoginScreen({ navigation }: any) {
             style={styles.input}
             value={password} onChangeText={setPassword}
             placeholder="••••••••"
+            placeholderTextColor="#999"
             secureTextEntry
             returnKeyType="done"
             onSubmitEditing={handleLogin}
@@ -97,7 +99,7 @@ const styles = StyleSheet.create({
   card: { backgroundColor: '#fff', borderRadius: 20, padding: 28, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 12, elevation: 8 },
   cardTitle: { fontSize: 20, fontWeight: 'bold', color: '#1A3560', marginBottom: 24, textAlign: 'center' },
   label: { fontSize: 13, fontWeight: '600', color: '#555', marginBottom: 6 },
-  input: { borderWidth: 1, borderColor: '#DDD', borderRadius: 10, paddingHorizontal: 16, paddingVertical: 12, fontSize: 15, marginBottom: 16, backgroundColor: '#FAFAFA' },
+  input: { borderWidth: 1, borderColor: '#DDD', borderRadius: 10, paddingHorizontal: 16, paddingVertical: 12, fontSize: 15, marginBottom: 16, backgroundColor: '#FAFAFA', color: '#1A1A1A' },
   btn: { backgroundColor: '#2E5FA3', borderRadius: 12, paddingVertical: 14, alignItems: 'center', marginTop: 8 },
   btnDisabled: { backgroundColor: '#90A8CC' },
   btnText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },

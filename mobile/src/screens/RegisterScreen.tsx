@@ -1,6 +1,6 @@
 // mobile/src/screens/RegisterScreen.tsx
 import React, { useState } from 'react'
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native'
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native'
 import * as SecureStore from 'expo-secure-store'
 import api from '../services/api'
 import { useAuth } from '../hooks/useAuth'
@@ -65,9 +65,11 @@ export default function RegisterScreen({ navigation }: any) {
             <View key={f.key}>
               <Text style={{ fontSize: 13, fontWeight: '600', color: '#555', marginBottom: 6, marginTop: 14 }}>{f.label}</Text>
               <TextInput
-                style={{ borderWidth: 1, borderColor: '#DDD', borderRadius: 10, paddingHorizontal: 14, paddingVertical: 12, fontSize: 15, backgroundColor: '#FAFAFA' }}
+                style={{ borderWidth: 1, borderColor: '#DDD', borderRadius: 10, paddingHorizontal: 14, paddingVertical: 12, fontSize: 15, backgroundColor: '#FAFAFA', color: '#1A1A1A' }}
                 value={(form as any)[f.key]} onChangeText={v => update(f.key, v)}
-                placeholder={f.placeholder} secureTextEntry={f.secure}
+                placeholder={f.placeholder}
+                placeholderTextColor="#999"
+                secureTextEntry={f.secure}
                 keyboardType={f.keyboard}
                 autoCapitalize={f.key === 'name' ? 'words' : 'none'}
                 autoCorrect={false}

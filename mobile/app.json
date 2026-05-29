@@ -1,20 +1,21 @@
 {
   "expo": {
     "name": "Cidade Conectada CE",
-    "slug": "cidade-alerta-ce",
+    "slug": "cidade-conectada-ce",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-   
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "br.gov.horizonte.Cidade Conectada",
+      "bundleIdentifier": "br.gov.horizonte.cidadeconectada",
       "infoPlist": {
-        "NSCameraUsageDescription": "O Cidade Conectada CE precisa da câmera para fotografar os problemas urbanos.",
+        "NSCameraUsageDescription": "O Cidade Conectada CE precisa da camera para fotografar os problemas urbanos.",
         "NSPhotoLibraryUsageDescription": "O Cidade Conectada CE precisa acessar sua galeria para selecionar fotos.",
-        "NSLocationWhenInUseUsageDescription": "O Cidade Conectada CE usa sua localização para georreferenciar a ocorrência."
+        "NSLocationWhenInUseUsageDescription": "O Cidade Conectada CE usa sua localizacao para georreferenciar a ocorrencia."
       }
     },
     "android": {
@@ -22,33 +23,42 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#1A3560"
       },
-      "package": "br.gov.horizonte.Cidade Conectada",
+      "package": "br.gov.horizonte.cidadeconectada",
       "permissions": [
         "CAMERA",
         "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE",
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
-        "RECEIVE_BOOT_COMPLETED",
-        "VIBRATE"
-      ],
-      
+        "VIBRATE",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ]
     },
     "web": {
-      "favicon": "./assets/favicon.png",
-      "name": "Cidade Conectada CE",
-      "shortName": "Cidade Conectada",
-      "description": "Plataforma de denúncias urbanas — Horizonte CE",
-      "themeColor": "#1A3560",
-      "backgroundColor": "#F0F4FB"
+      "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      ["expo-camera", { "cameraPermission": "Permite fotografar problemas urbanos." }],
-      ["expo-location", { "locationWhenInUsePermission": "Usada para localizar a ocorrência no mapa." }],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Permite fotografar problemas urbanos."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Usada para localizar a ocorrencia no mapa."
+        }
+      ],
       "expo-secure-store"
     ],
     "extra": {
-      "eas": { "projectId": "SEU_EAS_PROJECT_ID_AQUI" }
+      "eas": {
+        "projectId": "7772940c-aa18-4ddc-a792-ef5b1d8b9871"
+      }
     }
   }
 }
