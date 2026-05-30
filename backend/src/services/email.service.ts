@@ -220,3 +220,32 @@ export async function sendNewOccurrenceNotifications(data: OccurrenceEmailData):
     if (r.status === 'rejected') console.error(`‚ùå Falha no e-mail [${i}]:`, r.reason)
   })
 }
+
+// --- E-mail de redefinicao de senha -----------------------------
+export async function sendPasswordResetEmail(to: string, name: string, resetUrl: string): Promise<void> {
+  const html = `
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"/></head>
+<body style="margin:0;padding:0;background:#F0F4FB;font-family:Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#1A3560;"><tr><td align="center" style="padding:24px;">
+    <h1 style="margin:0;color:#fff;font-size:22px;">??? Cidade Conectada CE</h1>
+  </td></tr></table>
+  <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:24px 16px;">
+    <table width="560" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:12px;padding:32px;">
+      <tr><td>
+        <div style="text-align:center;margin-bottom:20px;"><div style="font-size:48px;">??</div>
+          <h2 style="margin:12px 0 4px;color:#1A3560;font-size:20px;">RedefiniÁ„o de Senha</h2></div>
+        <p style="font-size:14px;color:#555;line-height:1.6;">Ol·, <strong>${name}</strong>! Recebemos um pedido para redefinir a senha da sua conta. Clique no bot„o abaixo para criar uma nova senha:</p>
+        <div style="text-align:center;margin:24px 0;">
+          <a href="${resetUrl}" style="display:inline-block;background:#2E5FA3;color:#fff;text-decoration:none;font-size:14px;font-weight:bold;padding:14px 36px;border-radius:8px;">Redefinir minha senha</a>
+        </div>
+        <p style="font-size:12px;color:#888;line-height:1.6;">Este link expira em 1 hora. Se vocÍ n„o solicitou a redefiniÁ„o, ignore este e-mail ó sua senha permanece a mesma.</p>
+        <p style="font-size:11px;color:#aaa;margin-top:16px;word-break:break-all;">Ou copie este link: ${resetUrl}</p>
+      </td></tr>
+    </table>
+  </td></tr></table>
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#1A3560;"><tr><td align="center" style="padding:16px;">
+    <p style="margin:0;color:#BDD3F5;font-size:11px;">Cidade Conectada CE ó Horizonte/CE</p>
+  </td></tr></table>
+</body></html>`
+  await send(to, '?? RedefiniÁ„o de senha ó Cidade Conectada CE', html)
+}

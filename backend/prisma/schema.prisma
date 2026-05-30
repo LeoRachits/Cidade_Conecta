@@ -94,3 +94,12 @@ model StatusHistory {
   changedBy  User       @relation(fields: [changedById], references: [id])
   @@map("status_history")
 }
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String   @map("user_id")
+  expiresAt DateTime @map("expires_at")
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  @@map("password_reset_tokens")
+}

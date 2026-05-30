@@ -2,6 +2,7 @@
 import { z } from "zod"
 import * as authService from "../services/auth.service"
 import { prisma } from "../config/prisma"
+import { AppError } from "../middleware/error-handler"
 
 const registerSchema = z.object({
   name: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
@@ -63,3 +64,29 @@ export async function me(req: Request, res: Response, next: NextFunction) {
     res.json(user)
   } catch (err) { next(err) }
 }
+
+export async function forgotPassword(req: Request, res: Response, next: NextFunction) {
+  try {
+    const { email } = req.body
+    if (!email) throw new AppError("E-mail e obrigatorio", 400)
+    await authService.requestPasswordReset(email)
+    res.json({ message: "Se o e-mail estiver cadastrado, enviaremos as instrucoes de redefinicao." })
+  } catch (err) {
+    next(err)
+  }
+}
+
+export async function resetPassword(req: Request, res: Response, next: NextFunction) {
+  try {
+    const { token, password } = req.body
+    if (!token || !password) throw new AppError("Token e nova senha sao obrigatorios", 400)
+    if (password.length < 8) throw new AppError("A senha deve ter pelo menos 8 caracteres", 400)
+    if (!/[A-Z]/.test(password)) throw new AppError("A senha deve ter pelo menos uma letra maiuscula", 400)
+    if (!/[0-9]/.test(password)) throw new AppError("A senha deve ter pelo menos um numero", 400)
+    await authService.resetPassword(token, password)
+    res.json({ message: "Senha redefinida com sucesso. Voce ja pode entrar com a nova senha." })
+  } catch (err) {
+    next(err)
+  }
+}
+

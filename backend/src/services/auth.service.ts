@@ -1,4 +1,6 @@
-﻿import bcrypt from "bcryptjs"
+﻿import crypto from "crypto"
+import { sendPasswordResetEmail } from "./email.service"
+import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 import { prisma } from "../config/prisma"
 import { AppError } from "../middleware/error-handler"
@@ -126,3 +128,44 @@ export async function refreshTokens(refreshToken: string) {
   })
   return tokens
 }
+
+// ─── Recuperacao de senha ───────────────────────────────────────
+
+export async function requestPasswordReset(email: string) {
+  const user = await prisma.user.findFirst({
+    where: { email: email.trim().toLowerCase(), deletedAt: null },
+  })
+  // Por seguranca, sempre retorna sucesso (nao revela se o e-mail existe)
+  if (!user) return
+
+  const token = crypto.randomBytes(32).toString("hex")
+  await prisma.passwordResetToken.create({
+    data: {
+      token,
+      userId: user.id,
+      expiresAt: new Date(Date.now() + 60 * 60 * 1000), // 1 hora
+    },
+  })
+
+  const resetUrl = `${process.env.APP_URL ?? "http://localhost:5173"}/redefinir-senha?token=${token}`
+  await sendPasswordResetEmail(user.email, user.name, resetUrl)
+}
+
+export async function resetPassword(token: string, newPassword: string) {
+  const record = await prisma.passwordResetToken.findUnique({ where: { token } })
+  if (!record || record.usedAt || record.expiresAt < new Date()) {
+    throw new AppError("Link de redefinicao invalido ou expirado", 400)
+  }
+  const hashedPassword = await bcrypt.hash(newPassword, 12)
+  await prisma.$transaction([
+    prisma.user.update({
+      where: { id: record.userId },
+      data: { password: hashedPassword, mustChangePassword: false },
+    }),
+    prisma.passwordResetToken.update({
+      where: { token },
+      data: { usedAt: new Date() },
+    }),
+  ])
+}
+
