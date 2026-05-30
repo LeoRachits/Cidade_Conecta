@@ -16,9 +16,20 @@ interface DashboardData {
     totalUsers: number
     totalCitizens: number
     totalAdmins: number
+    avgResolutionMs: number
   }
   byCategory: { category: string; count: number }[]
   recentOccurrences: Occurrence[]
+}
+
+function formatDuration(ms: number): string {
+  if (!ms || ms <= 0) return '—'
+  const min = Math.floor(ms / 60000)
+  const h = Math.floor(min / 60)
+  const d = Math.floor(h / 24)
+  if (d > 0) return `${d}d ${h % 24}h`
+  if (h > 0) return `${h}h ${min % 60}min`
+  return `${min}min`
 }
 
 export default function AdminDashboardPage() {
@@ -50,6 +61,21 @@ export default function AdminDashboardPage() {
     <div className="space-y-6">
       <h1 className="text-xl font-bold text-gray-800">⚙️ Painel Administrativo</h1>
 
+      {/* Card destacado: Tempo médio de resolução (SLA) */}
+      <div className="bg-gradient-to-r from-blue-900 to-blue-700 rounded-2xl p-6 text-white flex items-center justify-between flex-wrap gap-4">
+        <div>
+          <p className="text-blue-100 text-sm">⏱️ Tempo Médio de Resolução</p>
+          <p className="text-4xl font-bold mt-1">{formatDuration(data.summary.avgResolutionMs)}</p>
+          <p className="text-blue-200 text-xs mt-1">
+            Média entre a abertura e a resolução das {data.summary.resolved} ocorrência(s) resolvida(s)
+          </p>
+        </div>
+        <div className="text-right">
+          <p className="text-blue-100 text-sm">Taxa de Resolução</p>
+          <p className="text-4xl font-bold mt-1">{data.summary.resolutionRate}%</p>
+        </div>
+      </div>
+
       {/* Summary */}
       <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
         {summaryCards.map(({ label, value, color }) => (
@@ -72,10 +98,7 @@ export default function AdminDashboardPage() {
                   {CATEGORY_LABELS[category as keyof typeof CATEGORY_LABELS] ?? category}
                 </div>
                 <div className="flex-1 bg-gray-100 rounded-full h-2.5">
-                  <div
-                    className="bg-blue-600 h-2.5 rounded-full transition-all"
-                    style={{ width: `${pct}%` }}
-                  />
+                  <div className="bg-blue-600 h-2.5 rounded-full transition-all" style={{ width: `${pct}%` }} />
                 </div>
                 <div className="text-sm font-medium text-gray-700 w-16 text-right">{count} ({pct}%)</div>
               </div>
@@ -88,20 +111,21 @@ export default function AdminDashboardPage() {
       <div className="bg-white rounded-2xl border border-gray-200 p-5">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-semibold text-gray-800">🕐 Ocorrências Recentes</h2>
-          <Link to="/" className="text-blue-600 text-sm hover:underline">Ver mapa →</Link>
         </div>
         <div className="space-y-2">
           {data.recentOccurrences.map((occ) => (
             <Link
               key={occ.id}
               to={`/ocorrencias/${occ.id}`}
-              className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 border border-gray-100 transition-colors"
             >
-              <div className="min-w-0 flex-1">
+              <div className="min-w-0">
                 <p className="text-sm font-medium text-gray-800 truncate">{occ.title}</p>
-                <p className="text-xs text-gray-400">{occ.user?.name} · {new Date(occ.createdAt).toLocaleDateString('pt-BR')}</p>
+                <p className="text-xs text-gray-500">
+                  {CATEGORY_LABELS[occ.category] ?? occ.category} · {occ.user?.name ?? ''}
+                </p>
               </div>
-              <span className={`shrink-0 ml-3 text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_COLORS[occ.status]}`}>
+              <span className={`text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap ml-3 ${STATUS_COLORS[occ.status]}`}>
                 {STATUS_LABELS[occ.status]}
               </span>
             </Link>

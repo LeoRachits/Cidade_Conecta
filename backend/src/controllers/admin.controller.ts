@@ -1,4 +1,4 @@
-﻿import { Request, Response, NextFunction } from "express"
+import { Request, Response, NextFunction } from "express"
 import { OccurrenceStatus } from "@prisma/client"
 import { prisma } from "../config/prisma"
 
@@ -36,6 +36,22 @@ export async function getDashboard(req: Request, res: Response, next: NextFuncti
       prisma.user.count({ where: { role: "ADMIN" } }),
     ])
 
+    // Tempo medio de resolucao: media de (data do status RESOLVED - data de criacao)
+    const resolvedHistories = await prisma.statusHistory.findMany({
+      where: { status: OccurrenceStatus.RESOLVED },
+      include: { occurrence: { select: { createdAt: true } } },
+    })
+
+    let avgResolutionMs = 0
+    if (resolvedHistories.length > 0) {
+      const totalMs = resolvedHistories.reduce((acc, h) => {
+        const opened = new Date(h.occurrence.createdAt).getTime()
+        const resolved = new Date(h.createdAt).getTime()
+        return acc + Math.max(0, resolved - opened)
+      }, 0)
+      avgResolutionMs = Math.round(totalMs / resolvedHistories.length)
+    }
+
     res.json({
       summary: {
         total: totalOccurrences,
@@ -51,6 +67,7 @@ export async function getDashboard(req: Request, res: Response, next: NextFuncti
         totalUsers,
         totalCitizens: totalUsers - totalAdmins,
         totalAdmins,
+        avgResolutionMs,
       },
       byCategory: byCategory.map((item) => ({
         category: item.category,
