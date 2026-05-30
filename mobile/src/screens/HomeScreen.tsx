@@ -1,7 +1,7 @@
 // mobile/src/screens/HomeScreen.tsx
 import React, { useState, useCallback } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native'
-import MapView, { Marker, Callout } from 'react-native-maps'
+import MapView, { Marker } from 'react-native-maps'
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import api from '../services/api'
 
@@ -23,6 +23,7 @@ export default function HomeScreen() {
   const navigation = useNavigation<any>()
   const [occurrences, setOccurrences] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [selected, setSelected] = useState<any | null>(null)
 
   useFocusEffect(
     useCallback(() => {
@@ -36,7 +37,6 @@ export default function HomeScreen() {
     }, [])
   )
 
-  // Apenas ocorrências com coordenadas válidas aparecem no mapa
   const validOccurrences = occurrences.filter(
     o => typeof o.latitude === 'number' && typeof o.longitude === 'number'
   )
@@ -65,28 +65,42 @@ export default function HomeScreen() {
           initialRegion={{ latitude: -3.8694, longitude: -38.4983, latitudeDelta: 0.06, longitudeDelta: 0.06 }}
           showsUserLocation
           showsMyLocationButton
+          onPress={() => setSelected(null)}
         >
           {validOccurrences.map(occ => (
             <Marker
               key={occ.id}
               coordinate={{ latitude: occ.latitude, longitude: occ.longitude }}
               pinColor={STATUS_COLORS[occ.status] ?? '#999'}
-              onCalloutPress={() => navigation.navigate('OccurrenceDetail', { id: occ.id })}
-            >
-              <Callout tooltip onPress={() => navigation.navigate('OccurrenceDetail', { id: occ.id })}>
-                <View style={styles.callout}>
-                  <Text style={styles.calloutCat}>{CATEGORY_LABELS[occ.category] ?? occ.category}</Text>
-                  <Text style={styles.calloutTitle}>{occ.title}</Text>
-                  {!!occ.neighborhood && <Text style={styles.calloutSub}>{occ.neighborhood}</Text>}
-                  <Text style={[styles.calloutStatus, { color: STATUS_COLORS[occ.status] }]}>
-                    {STATUS_LABELS[occ.status] ?? occ.status}
-                  </Text>
-                  <Text style={styles.calloutTap}>Toque para ver detalhes</Text>
-                </View>
-              </Callout>
-            </Marker>
+              onPress={() => setSelected(occ)}
+            />
           ))}
         </MapView>
+      )}
+
+      {/* Painel inferior ao selecionar um marcador */}
+      {selected && (
+        <View style={styles.panel}>
+          <View style={styles.panelHeader}>
+            <Text style={styles.panelCat}>{CATEGORY_LABELS[selected.category] ?? selected.category}</Text>
+            <TouchableOpacity onPress={() => setSelected(null)}>
+              <Text style={styles.panelClose}>✕</Text>
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.panelTitle}>{selected.title}</Text>
+          {!!selected.neighborhood && <Text style={styles.panelSub}>📍 {selected.neighborhood}</Text>}
+          <View style={[styles.panelStatus, { backgroundColor: (STATUS_COLORS[selected.status] ?? '#999') + '20' }]}>
+            <Text style={[styles.panelStatusTxt, { color: STATUS_COLORS[selected.status] ?? '#999' }]}>
+              {STATUS_LABELS[selected.status] ?? selected.status}
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={styles.panelBtn}
+            onPress={() => { const id = selected.id; setSelected(null); navigation.navigate('OccurrenceDetail', { id }) }}
+          >
+            <Text style={styles.panelBtnTxt}>Ver detalhes completos →</Text>
+          </TouchableOpacity>
+        </View>
       )}
 
       {/* FAB */}
@@ -106,12 +120,20 @@ const styles = StyleSheet.create({
   statLbl: { fontSize: 11, color: '#888', marginTop: 2 },
   map: { flex: 1 },
   loadingBox: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  callout: { width: 210, padding: 12, backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: '#E5E5E5' },
-  calloutCat: { fontSize: 12, color: '#2E5FA3', fontWeight: 'bold', marginBottom: 4 },
-  calloutTitle: { fontWeight: 'bold', fontSize: 14, color: '#1A3560', marginBottom: 2 },
-  calloutSub: { fontSize: 11, color: '#888' },
-  calloutStatus: { fontWeight: 'bold', fontSize: 12, marginTop: 4 },
-  calloutTap: { fontSize: 10, color: '#2E5FA3', marginTop: 6, fontStyle: 'italic' },
+  panel: {
+    position: 'absolute', bottom: 24, left: 16, right: 16,
+    backgroundColor: '#fff', borderRadius: 16, padding: 18,
+    elevation: 8, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 12,
+  },
+  panelHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  panelCat: { fontSize: 13, color: '#2E5FA3', fontWeight: 'bold' },
+  panelClose: { fontSize: 18, color: '#999', fontWeight: 'bold', paddingHorizontal: 4 },
+  panelTitle: { fontSize: 18, fontWeight: 'bold', color: '#1A3560', marginTop: 6 },
+  panelSub: { fontSize: 13, color: '#888', marginTop: 4 },
+  panelStatus: { alignSelf: 'flex-start', paddingHorizontal: 12, paddingVertical: 5, borderRadius: 20, marginTop: 10 },
+  panelStatusTxt: { fontSize: 12, fontWeight: 'bold' },
+  panelBtn: { backgroundColor: '#1A3560', borderRadius: 12, paddingVertical: 13, alignItems: 'center', marginTop: 16 },
+  panelBtnTxt: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
   fab: { position: 'absolute', bottom: 28, right: 24, width: 56, height: 56, borderRadius: 28, backgroundColor: '#1A3560', justifyContent: 'center', alignItems: 'center', elevation: 6, shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.3, shadowRadius: 6 },
   fabText: { fontSize: 30, color: '#fff', fontWeight: '300' },
 })
