@@ -1,12 +1,12 @@
-// backend/src/services/email.service.ts
-// ─────────────────────────────────────────────────────────────────────────────
-// Sistema de Notificação por E-mail — CidadeAlerta CE
+﻿// backend/src/services/email.service.ts
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Sistema de NotificaÃ§Ã£o por E-mail â€” CidadeAlerta CE
 // Utiliza Nodemailer + Gmail SMTP (gratuito)
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 import nodemailer from 'nodemailer'
 import { OccurrenceCategory, OccurrenceStatus } from '@prisma/client'
 
-// ─── Tipos ───────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Tipos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export interface OccurrenceEmailData {
   id: string
@@ -27,19 +27,23 @@ export interface OccurrenceEmailData {
   }
 }
 
-// ─── Configuração do transporte ──────────────────────────────────────────────
+// â”€â”€â”€ ConfiguraÃ§Ã£o do transporte â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function createTransporter() {
   return nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    requireTLS: true,
     auth: {
-      user: process.env.EMAIL_FROM,       // ex: cidadealerta.ce@gmail.com
-      pass: process.env.EMAIL_APP_PASSWORD, // Senha de App do Google (não a senha normal)
+      user: process.env.EMAIL_FROM,
+      pass: process.env.EMAIL_APP_PASSWORD,
     },
-  })
+    tls: { family: 4 },
+  } as any)
 }
 
-// ─── Destinatários da Prefeitura ─────────────────────────────────────────────
+// â”€â”€â”€ DestinatÃ¡rios da Prefeitura â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function getPrefeituraRecipients(category: OccurrenceCategory): string[] {
   const base = [
@@ -57,21 +61,21 @@ function getPrefeituraRecipients(category: OccurrenceCategory): string[] {
   }
   return base
 }
-// ─── Labels legíveis ─────────────────────────────────────────────────────────
+// â”€â”€â”€ Labels legÃ­veis â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const CATEGORY_LABELS: Record<OccurrenceCategory, string> = {
-  ROAD:     '🛣️ Via / Buraco / Calçada',
-  LIGHTING: '💡 Iluminação Pública',
-  GARBAGE:  '🗑️ Lixo Irregular',
-  FLOODING: '🌊 Alagamento',
-  WATER:    '💧 Falta de Água (Cagece)',
-  ENERGY:   '⚡ Falta de Luz (Enel)',
-  OTHER:    '📌 Outro',
+  ROAD:     'ðŸ›£ï¸ Via / Buraco / CalÃ§ada',
+  LIGHTING: 'ðŸ’¡ IluminaÃ§Ã£o PÃºblica',
+  GARBAGE:  'ðŸ—‘ï¸ Lixo Irregular',
+  FLOODING: 'ðŸŒŠ Alagamento',
+  WATER:    'ðŸ’§ Falta de Ãgua (Cagece)',
+  ENERGY:   'âš¡ Falta de Luz (Enel)',
+  OTHER:    'ðŸ“Œ Outro',
 }
 
 const STATUS_LABELS: Record<OccurrenceStatus, string> = {
   OPEN:         'Aberto',
-  UNDER_REVIEW: 'Em Análise',
+  UNDER_REVIEW: 'Em AnÃ¡lise',
   IN_PROGRESS:  'Em Andamento',
   RESOLVED:     'Resolvido',
   REJECTED:     'Rejeitado',
@@ -85,7 +89,7 @@ const STATUS_COLORS: Record<OccurrenceStatus, string> = {
   REJECTED:     '#95A5A6',
 }
 
-// ─── Template HTML da notificação à Prefeitura ───────────────────────────────
+// â”€â”€â”€ Template HTML da notificaÃ§Ã£o Ã  Prefeitura â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function buildPrefeituraEmailHtml(data: OccurrenceEmailData): string {
   const googleMapsUrl = `https://www.google.com/maps?q=${data.latitude},${data.longitude}`
@@ -105,7 +109,7 @@ function buildPrefeituraEmailHtml(data: OccurrenceEmailData): string {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nova Ocorrência — CidadeAlerta CE</title>
+  <title>Nova OcorrÃªncia â€” CidadeAlerta CE</title>
 </head>
 <body style="margin:0;padding:0;background:#F0F4FB;font-family:Arial,sans-serif;">
 
@@ -114,10 +118,10 @@ function buildPrefeituraEmailHtml(data: OccurrenceEmailData): string {
     <tr>
       <td align="center" style="padding:28px 20px;">
         <h1 style="margin:0;color:#ffffff;font-size:24px;font-weight:bold;">
-          🏙️ CidadeAlerta CE
+          ðŸ™ï¸ CidadeAlerta CE
         </h1>
         <p style="margin:6px 0 0;color:#BDD3F5;font-size:13px;">
-          Prefeitura Municipal de Horizonte — Sistema de Ocorrências Urbanas
+          Prefeitura Municipal de Horizonte â€” Sistema de OcorrÃªncias Urbanas
         </p>
       </td>
     </tr>
@@ -128,7 +132,7 @@ function buildPrefeituraEmailHtml(data: OccurrenceEmailData): string {
     <tr>
       <td align="center" style="padding:14px 20px;">
         <p style="margin:0;color:#ffffff;font-size:15px;font-weight:bold;">
-          🚨 NOVA OCORRÊNCIA REGISTRADA — Ação Necessária
+          ðŸš¨ NOVA OCORRÃŠNCIA REGISTRADA â€” AÃ§Ã£o NecessÃ¡ria
         </p>
       </td>
     </tr>
@@ -185,16 +189,16 @@ function buildPrefeituraEmailHtml(data: OccurrenceEmailData): string {
                 <tr>
                   <td width="50%" style="padding:0 8px 12px 0;vertical-align:top;">
                     <p style="margin:0;font-size:11px;color:#888;font-weight:bold;text-transform:uppercase;">
-                      📍 Localização
+                      ðŸ“ LocalizaÃ§Ã£o
                     </p>
                     <p style="margin:4px 0 0;font-size:13px;color:#333;">
-                      ${data.address ?? 'Não informado'}<br/>
+                      ${data.address ?? 'NÃ£o informado'}<br/>
                       ${data.neighborhood ? `Bairro: ${data.neighborhood}` : ''}
                     </p>
                   </td>
                   <td width="50%" style="padding:0 0 12px 8px;vertical-align:top;">
                     <p style="margin:0;font-size:11px;color:#888;font-weight:bold;text-transform:uppercase;">
-                      👤 Cidadão
+                      ðŸ‘¤ CidadÃ£o
                     </p>
                     <p style="margin:4px 0 0;font-size:13px;color:#333;">
                       ${data.citizen.name}<br/>
@@ -206,7 +210,7 @@ function buildPrefeituraEmailHtml(data: OccurrenceEmailData): string {
                 <tr>
                   <td width="50%" style="padding:0 8px 0 0;vertical-align:top;">
                     <p style="margin:0;font-size:11px;color:#888;font-weight:bold;text-transform:uppercase;">
-                      🗺️ Coordenadas GPS
+                      ðŸ—ºï¸ Coordenadas GPS
                     </p>
                     <p style="margin:4px 0 0;font-size:13px;color:#333;">
                       Lat: ${data.latitude.toFixed(6)}<br/>
@@ -215,7 +219,7 @@ function buildPrefeituraEmailHtml(data: OccurrenceEmailData): string {
                   </td>
                   <td width="50%" style="padding:0 0 0 8px;vertical-align:top;">
                     <p style="margin:0;font-size:11px;color:#888;font-weight:bold;text-transform:uppercase;">
-                      🆔 ID da Ocorrência
+                      ðŸ†” ID da OcorrÃªncia
                     </p>
                     <p style="margin:4px 0 0;font-size:11px;color:#555;word-break:break-all;">
                       ${data.id}
@@ -231,10 +235,10 @@ function buildPrefeituraEmailHtml(data: OccurrenceEmailData): string {
           <tr>
             <td style="padding:20px 32px 0;">
               <p style="margin:0 0 8px;font-size:11px;color:#888;font-weight:bold;text-transform:uppercase;">
-                📷 Foto da Ocorrência
+                ðŸ“· Foto da OcorrÃªncia
               </p>
               <img src="${process.env.APP_URL ?? 'http://localhost:5173'}${data.photoUrl}"
-                   alt="Foto da ocorrência"
+                   alt="Foto da ocorrÃªncia"
                    style="width:100%;max-width:536px;border-radius:8px;
                           border:1px solid #eee;display:block;" />
             </td>
@@ -250,7 +254,7 @@ function buildPrefeituraEmailHtml(data: OccurrenceEmailData): string {
                        style="display:inline-block;background:#1A3560;color:#fff;
                               text-decoration:none;font-size:13px;font-weight:bold;
                               padding:12px 24px;border-radius:8px;">
-                      ⚙️ Acessar Painel Admin
+                      âš™ï¸ Acessar Painel Admin
                     </a>
                   </td>
                   <td>
@@ -258,7 +262,7 @@ function buildPrefeituraEmailHtml(data: OccurrenceEmailData): string {
                        style="display:inline-block;background:#27AE60;color:#fff;
                               text-decoration:none;font-size:13px;font-weight:bold;
                               padding:12px 24px;border-radius:8px;">
-                      🗺️ Ver no Google Maps
+                      ðŸ—ºï¸ Ver no Google Maps
                     </a>
                   </td>
                 </tr>
@@ -277,7 +281,7 @@ function buildPrefeituraEmailHtml(data: OccurrenceEmailData): string {
       <td align="center" style="padding:20px;">
         <p style="margin:0;color:#BDD3F5;font-size:11px;">
           Este e-mail foi enviado automaticamente pelo sistema CidadeAlerta CE.<br/>
-          Prefeitura Municipal de Horizonte — CE | Sistema de Ocorrências Urbanas<br/>
+          Prefeitura Municipal de Horizonte â€” CE | Sistema de OcorrÃªncias Urbanas<br/>
           <a href="${process.env.APP_URL ?? 'http://localhost:5173'}"
              style="color:#7EB8F7;">Acessar o sistema</a>
         </p>
@@ -289,7 +293,7 @@ function buildPrefeituraEmailHtml(data: OccurrenceEmailData): string {
 </html>`
 }
 
-// ─── Template HTML de confirmação ao cidadão ─────────────────────────────────
+// â”€â”€â”€ Template HTML de confirmaÃ§Ã£o ao cidadÃ£o â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function buildCitizenConfirmationHtml(data: OccurrenceEmailData): string {
   const adminUrl = `${process.env.APP_URL ?? 'http://localhost:5173'}/ocorrencias/${data.id}`
@@ -302,7 +306,7 @@ function buildCitizenConfirmationHtml(data: OccurrenceEmailData): string {
 <body style="margin:0;padding:0;background:#F0F4FB;font-family:Arial,sans-serif;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#1A3560;">
     <tr><td align="center" style="padding:24px;">
-      <h1 style="margin:0;color:#fff;font-size:22px;">🏙️ CidadeAlerta CE</h1>
+      <h1 style="margin:0;color:#fff;font-size:22px;">ðŸ™ï¸ CidadeAlerta CE</h1>
     </td></tr>
   </table>
   <table width="100%" cellpadding="0" cellspacing="0">
@@ -312,17 +316,17 @@ function buildCitizenConfirmationHtml(data: OccurrenceEmailData): string {
                     box-shadow:0 2px 12px rgba(0,0,0,0.08);">
         <tr><td>
           <div style="text-align:center;margin-bottom:24px;">
-            <div style="font-size:48px;">✅</div>
+            <div style="font-size:48px;">âœ…</div>
             <h2 style="margin:12px 0 4px;color:#1A3560;font-size:20px;">
-              Ocorrência registrada com sucesso!
+              OcorrÃªncia registrada com sucesso!
             </h2>
             <p style="margin:0;color:#666;font-size:14px;">
-              Olá, <strong>${data.citizen.name}</strong>! Sua denúncia foi recebida.
+              OlÃ¡, <strong>${data.citizen.name}</strong>! Sua denÃºncia foi recebida.
             </p>
           </div>
           <div style="background:#EBF1FB;border-radius:8px;padding:16px;margin-bottom:20px;">
             <p style="margin:0 0 6px;font-size:13px;color:#333;">
-              <strong>Título:</strong> ${data.title}
+              <strong>TÃ­tulo:</strong> ${data.title}
             </p>
             <p style="margin:0 0 6px;font-size:13px;color:#333;">
               <strong>Categoria:</strong> ${categoryLabel}
@@ -333,7 +337,7 @@ function buildCitizenConfirmationHtml(data: OccurrenceEmailData): string {
           </div>
           <p style="font-size:13px;color:#555;line-height:1.6;">
             A Prefeitura de Horizonte foi notificada automaticamente. 
-            Você receberá atualizações por e-mail e notificação no app 
+            VocÃª receberÃ¡ atualizaÃ§Ãµes por e-mail e notificaÃ§Ã£o no app 
             conforme o status mudar.
           </p>
           <div style="text-align:center;margin-top:24px;">
@@ -341,7 +345,7 @@ function buildCitizenConfirmationHtml(data: OccurrenceEmailData): string {
                style="display:inline-block;background:#2E5FA3;color:#fff;
                       text-decoration:none;font-size:13px;font-weight:bold;
                       padding:12px 32px;border-radius:8px;">
-              Acompanhar minha ocorrência
+              Acompanhar minha ocorrÃªncia
             </a>
           </div>
         </td></tr>
@@ -351,7 +355,7 @@ function buildCitizenConfirmationHtml(data: OccurrenceEmailData): string {
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#1A3560;">
     <tr><td align="center" style="padding:16px;">
       <p style="margin:0;color:#BDD3F5;font-size:11px;">
-        CidadeAlerta CE — Horizonte, CE | Projeto Acadêmico 2026
+        CidadeAlerta CE â€” Horizonte, CE | Projeto AcadÃªmico 2026
       </p>
     </td></tr>
   </table>
@@ -359,7 +363,7 @@ function buildCitizenConfirmationHtml(data: OccurrenceEmailData): string {
 </html>`
 }
 
-// ─── Template de atualização de status ───────────────────────────────────────
+// â”€â”€â”€ Template de atualizaÃ§Ã£o de status â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function buildStatusUpdateHtml(
   data: OccurrenceEmailData,
@@ -377,7 +381,7 @@ function buildStatusUpdateHtml(
 <body style="margin:0;padding:0;background:#F0F4FB;font-family:Arial,sans-serif;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#1A3560;">
     <tr><td align="center" style="padding:24px;">
-      <h1 style="margin:0;color:#fff;font-size:22px;">🏙️ CidadeAlerta CE</h1>
+      <h1 style="margin:0;color:#fff;font-size:22px;">ðŸ™ï¸ CidadeAlerta CE</h1>
     </td></tr>
   </table>
   <table width="100%" cellpadding="0" cellspacing="0" style="background:${statusColor};">
@@ -393,10 +397,10 @@ function buildStatusUpdateHtml(
              style="background:#fff;border-radius:12px;padding:32px;">
         <tr><td>
           <p style="font-size:14px;color:#333;">
-            Olá, <strong>${data.citizen.name}</strong>!
+            OlÃ¡, <strong>${data.citizen.name}</strong>!
           </p>
           <p style="font-size:14px;color:#555;line-height:1.6;">
-            Sua ocorrência <strong>"${data.title}"</strong> teve o status atualizado para:
+            Sua ocorrÃªncia <strong>"${data.title}"</strong> teve o status atualizado para:
           </p>
           <div style="text-align:center;margin:20px 0;">
             <span style="display:inline-block;background:${statusColor};color:#fff;
@@ -408,7 +412,7 @@ function buildStatusUpdateHtml(
           <div style="background:#F8F9FA;border-left:4px solid ${statusColor};
                       padding:14px;border-radius:0 8px 8px 0;margin:16px 0;">
             <p style="margin:0;font-size:13px;color:#333;">
-              <strong>Comentário da Prefeitura:</strong><br/>${comment}
+              <strong>ComentÃ¡rio da Prefeitura:</strong><br/>${comment}
             </p>
           </div>` : ''}
           <div style="text-align:center;margin-top:24px;">
@@ -416,7 +420,7 @@ function buildStatusUpdateHtml(
                style="display:inline-block;background:#2E5FA3;color:#fff;
                       text-decoration:none;font-size:13px;font-weight:bold;
                       padding:12px 32px;border-radius:8px;">
-              Ver detalhes da ocorrência
+              Ver detalhes da ocorrÃªncia
             </a>
           </div>
         </td></tr>
@@ -427,11 +431,11 @@ function buildStatusUpdateHtml(
 </html>`
 }
 
-// ─── Funções públicas ─────────────────────────────────────────────────────────
+// â”€â”€â”€ FunÃ§Ãµes pÃºblicas â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /**
- * Notifica a Prefeitura e a Secretaria sobre nova ocorrência.
- * Chamada logo após salvar no banco.
+ * Notifica a Prefeitura e a Secretaria sobre nova ocorrÃªncia.
+ * Chamada logo apÃ³s salvar no banco.
  */
 export async function notifyPrefeitura(data: OccurrenceEmailData): Promise<void> {
   const transporter = createTransporter()
@@ -441,16 +445,16 @@ export async function notifyPrefeitura(data: OccurrenceEmailData): Promise<void>
   await transporter.sendMail({
     from: `"CidadeAlerta CE" <${process.env.EMAIL_FROM}>`,
     to: recipients.join(', '),
-    subject: `🚨 [CidadeAlerta CE] Nova Ocorrência: ${data.title} — ${categoryLabel}`,
+    subject: `ðŸš¨ [CidadeAlerta CE] Nova OcorrÃªncia: ${data.title} â€” ${categoryLabel}`,
     html: buildPrefeituraEmailHtml(data),
     replyTo: data.citizen.email,
   })
 
-  console.log(`📧 Prefeitura notificada: ${recipients.join(', ')} — "${data.title}"`)
+  console.log(`ðŸ“§ Prefeitura notificada: ${recipients.join(', ')} â€” "${data.title}"`)
 }
 
 /**
- * Envia confirmação de registro ao cidadão.
+ * Envia confirmaÃ§Ã£o de registro ao cidadÃ£o.
  */
 export async function confirmCitizenRegistration(data: OccurrenceEmailData): Promise<void> {
   const transporter = createTransporter()
@@ -458,15 +462,15 @@ export async function confirmCitizenRegistration(data: OccurrenceEmailData): Pro
   await transporter.sendMail({
     from: `"CidadeAlerta CE" <${process.env.EMAIL_FROM}>`,
     to: data.citizen.email,
-    subject: `✅ Ocorrência registrada: ${data.title} — CidadeAlerta CE`,
+    subject: `âœ… OcorrÃªncia registrada: ${data.title} â€” CidadeAlerta CE`,
     html: buildCitizenConfirmationHtml(data),
   })
 
-  console.log(`📧 Confirmação enviada ao cidadão: ${data.citizen.email}`)
+  console.log(`ðŸ“§ ConfirmaÃ§Ã£o enviada ao cidadÃ£o: ${data.citizen.email}`)
 }
 
 /**
- * Notifica o cidadão sobre mudança de status.
+ * Notifica o cidadÃ£o sobre mudanÃ§a de status.
  */
 export async function notifyCitizenStatusUpdate(
   data: OccurrenceEmailData,
@@ -478,16 +482,16 @@ export async function notifyCitizenStatusUpdate(
   await transporter.sendMail({
     from: `"CidadeAlerta CE" <${process.env.EMAIL_FROM}>`,
     to: data.citizen.email,
-    subject: `📋 Atualização: "${data.title}" — ${STATUS_LABELS[newStatus]} | CidadeAlerta CE`,
+    subject: `ðŸ“‹ AtualizaÃ§Ã£o: "${data.title}" â€” ${STATUS_LABELS[newStatus]} | CidadeAlerta CE`,
     html: buildStatusUpdateHtml(data, newStatus, comment),
   })
 
-  console.log(`📧 Status update enviado: ${data.citizen.email} — ${STATUS_LABELS[newStatus]}`)
+  console.log(`ðŸ“§ Status update enviado: ${data.citizen.email} â€” ${STATUS_LABELS[newStatus]}`)
 }
 
 /**
- * Envia todas as notificações de uma nova ocorrência em paralelo.
- * Não lança erro se o e-mail falhar (log apenas), para não bloquear a criação.
+ * Envia todas as notificaÃ§Ãµes de uma nova ocorrÃªncia em paralelo.
+ * NÃ£o lanÃ§a erro se o e-mail falhar (log apenas), para nÃ£o bloquear a criaÃ§Ã£o.
  */
 export async function sendNewOccurrenceNotifications(data: OccurrenceEmailData): Promise<void> {
   await Promise.allSettled([
@@ -496,8 +500,9 @@ export async function sendNewOccurrenceNotifications(data: OccurrenceEmailData):
   ]).then((results) => {
     results.forEach((r, i) => {
       if (r.status === 'rejected') {
-        console.error(`❌ Falha no e-mail [${i}]:`, r.reason)
+        console.error(`âŒ Falha no e-mail [${i}]:`, r.reason)
       }
     })
   })
 }
+
