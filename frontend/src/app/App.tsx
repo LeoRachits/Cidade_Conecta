@@ -4,6 +4,8 @@ import { AuthProvider, useAuth } from '../hooks/useAuth'
 import LoginPage from './LoginPage'
 import RegisterPage from './RegisterPage'
 import PrivacyPage from './PrivacyPage'
+import ForgotPasswordPage from './ForgotPasswordPage'
+import ResetPasswordPage from './ResetPasswordPage'
 import ChangePasswordPage from './ChangePasswordPage'
 import HomePage from './HomePage'
 import NewOccurrencePage from './NewOccurrencePage'
@@ -52,6 +54,8 @@ function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/cadastro" element={<RegisterPage />} />
       <Route path="/privacidade" element={<PrivacyPage />} />
+      <Route path="/esqueci-senha" element={<ForgotPasswordPage />} />
+      <Route path="/redefinir-senha" element={<ResetPasswordPage />} />
       <Route path="/trocar-senha" element={<ChangePasswordRoute />} />
       <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
         <Route index element={<HomePage />} />
@@ -75,3 +79,4 @@ export default function App() {
     </BrowserRouter>
   )
 }
+
