@@ -1,15 +1,17 @@
-﻿import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
-import { AuthProvider, useAuth } from "../hooks/useAuth"
-import LoginPage from "./LoginPage"
-import RegisterPage from "./RegisterPage"
-import ChangePasswordPage from "./ChangePasswordPage"
-import HomePage from "./HomePage"
-import NewOccurrencePage from "./NewOccurrencePage"
-import MyOccurrencesPage from "./MyOccurrencesPage"
-import OccurrenceDetailPage from "./OccurrenceDetailPage"
-import AdminDashboardPage from "./AdminDashboardPage"
-import UsersPage from "./UsersPage"
-import Layout from "../components/ui/Layout"
+﻿// src/app/App.tsx
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { AuthProvider, useAuth } from '../hooks/useAuth'
+import LoginPage from './LoginPage'
+import RegisterPage from './RegisterPage'
+import PrivacyPage from './PrivacyPage'
+import ChangePasswordPage from './ChangePasswordPage'
+import HomePage from './HomePage'
+import NewOccurrencePage from './NewOccurrencePage'
+import MyOccurrencesPage from './MyOccurrencesPage'
+import OccurrenceDetailPage from './OccurrenceDetailPage'
+import AdminDashboardPage from './AdminDashboardPage'
+import UsersPage from './UsersPage'
+import Layout from '../components/ui/Layout'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -49,6 +51,7 @@ function AppRoutes() {
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/cadastro" element={<RegisterPage />} />
+      <Route path="/privacidade" element={<PrivacyPage />} />
       <Route path="/trocar-senha" element={<ChangePasswordRoute />} />
       <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
         <Route index element={<HomePage />} />

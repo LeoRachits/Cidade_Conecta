@@ -9,6 +9,7 @@ import { AuthProvider, useAuth } from './src/hooks/useAuth'
 import OnboardingScreen from './src/screens/OnboardingScreen'
 import LoginScreen from './src/screens/LoginScreen'
 import RegisterScreen from './src/screens/RegisterScreen'
+import PrivacyScreen from './src/screens/PrivacyScreen'
 import HomeScreen from './src/screens/HomeScreen'
 import NewOccurrenceScreen from './src/screens/NewOccurrenceScreen'
 import MyOccurrencesScreen from './src/screens/MyOccurrencesScreen'
@@ -70,6 +71,10 @@ function RootNavigator({ showOnboarding, onOnboardingDone }: { showOnboarding: b
         <>
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Register" component={RegisterScreen} />
+          <Stack.Screen
+            name="Privacy" component={PrivacyScreen}
+            options={{ headerShown: true, headerStyle: { backgroundColor: '#1A3560' }, headerTintColor: '#fff', title: 'Política de Privacidade' }}
+          />
         </>
       ) : (
         <>

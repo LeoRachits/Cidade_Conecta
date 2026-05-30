@@ -8,12 +8,14 @@ import { useAuth } from '../hooks/useAuth'
 export default function RegisterScreen({ navigation }: any) {
   const { login } = useAuth()
   const [form, setForm] = useState({ name: '', email: '', phone: '', password: '', confirm: '' })
+  const [consent, setConsent] = useState(false)
   const [loading, setLoading] = useState(false)
 
   function update(k: string, v: string) { setForm(p => ({ ...p, [k]: v })) }
 
   async function handle() {
     if (!form.name || !form.email || !form.password) { Alert.alert('Atenção', 'Preencha todos os campos obrigatórios'); return }
+    if (!consent) { Alert.alert('Atenção', 'Você precisa aceitar a Política de Privacidade para continuar'); return }
     if (form.password !== form.confirm) { Alert.alert('Erro', 'As senhas não coincidem'); return }
     if (form.password.length < 8) { Alert.alert('Erro', 'A senha deve ter pelo menos 8 caracteres'); return }
     if (!/[A-Z]/.test(form.password)) { Alert.alert('Erro', 'A senha deve ter pelo menos uma letra maiúscula'); return }
@@ -76,6 +78,28 @@ export default function RegisterScreen({ navigation }: any) {
               />
             </View>
           ))}
+
+          <TouchableOpacity
+            style={{ flexDirection: 'row', alignItems: 'flex-start', marginTop: 18, gap: 8 }}
+            onPress={() => setConsent(!consent)}
+            activeOpacity={0.7}
+          >
+            <View style={{
+              width: 22, height: 22, borderRadius: 5, borderWidth: 2,
+              borderColor: consent ? '#27AE60' : '#BBB', backgroundColor: consent ? '#27AE60' : '#fff',
+              alignItems: 'center', justifyContent: 'center', marginTop: 1,
+            }}>
+              {consent && <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 14 }}>✓</Text>}
+            </View>
+            <Text style={{ flex: 1, fontSize: 12, color: '#555', lineHeight: 18 }}>
+              Li e aceito a{' '}
+              <Text style={{ color: '#2E5FA3', fontWeight: 'bold' }} onPress={() => navigation.navigate('Privacy')}>
+                Política de Privacidade
+              </Text>
+              {' '}e autorizo o tratamento dos meus dados conforme a LGPD.
+            </Text>
+          </TouchableOpacity>
+
           <TouchableOpacity
             style={{ backgroundColor: '#27AE60', borderRadius: 12, paddingVertical: 14, alignItems: 'center', marginTop: 20, opacity: loading ? 0.7 : 1 }}
             onPress={handle} disabled={loading}

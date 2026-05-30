@@ -7,6 +7,7 @@ import { AuthResponse } from '../types'
 export default function RegisterPage() {
   const navigate = useNavigate()
   const [form, setForm] = useState({ name: '', email: '', phone: '', password: '', confirmPassword: '' })
+  const [consent, setConsent] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -17,6 +18,10 @@ export default function RegisterPage() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setError('')
+    if (!consent) {
+      setError('Você precisa aceitar a Política de Privacidade para continuar')
+      return
+    }
     if (form.password !== form.confirmPassword) {
       setError('As senhas não coincidem')
       return
@@ -33,7 +38,8 @@ export default function RegisterPage() {
       localStorage.setItem('refreshToken', data.refreshToken)
       navigate('/')
     } catch (err: any) {
-      setError(err.response?.data?.error ?? 'Erro ao criar conta')
+      const details = err.response?.data?.details
+      setError(details ? details.map((d: any) => d.message).join(', ') : (err.response?.data?.error ?? 'Erro ao criar conta'))
     } finally {
       setLoading(false)
     }
@@ -72,6 +78,23 @@ export default function RegisterPage() {
               />
             </div>
           ))}
+
+          <label className="flex items-start gap-2 text-sm text-gray-600 mt-2">
+            <input
+              type="checkbox"
+              checked={consent}
+              onChange={(e) => setConsent(e.target.checked)}
+              className="mt-0.5 w-4 h-4"
+            />
+            <span>
+              Li e aceito a{' '}
+              <Link to="/privacidade" target="_blank" className="text-blue-700 hover:underline font-medium">
+                Política de Privacidade
+              </Link>
+              {' '}e autorizo o tratamento dos meus dados conforme a LGPD.
+            </span>
+          </label>
+
           <button
             type="submit"
             disabled={loading}
