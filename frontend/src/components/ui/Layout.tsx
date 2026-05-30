@@ -53,6 +53,13 @@ export default function Layout() {
           </nav>
           <div className="flex items-center gap-3 text-sm">
             <span className="text-blue-200 hidden md:block">Olá, {user?.name.split(' ')[0]}</span>
+            <NavLink
+              to="/trocar-senha"
+              className="text-blue-200 hover:text-white transition-colors hidden md:block"
+              title="Alterar senha"
+            >
+              🔑 Senha
+            </NavLink>
             <button
               onClick={handleLogout}
               className="bg-blue-700 hover:bg-blue-600 px-3 py-1.5 rounded-lg transition-colors"
