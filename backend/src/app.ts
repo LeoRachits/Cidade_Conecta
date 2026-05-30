@@ -11,6 +11,8 @@ import path from "path"
 
 const app = express()
 
+app.set("trust proxy", 1)
+
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true)
