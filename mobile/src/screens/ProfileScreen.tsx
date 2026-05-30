@@ -3,6 +3,12 @@ import React from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native'
 import { useAuth } from '../hooks/useAuth'
 
+function roleLabel(role?: string) {
+  if (role === 'MASTER') return 'Administrador Master'
+  if (role === 'ADMIN') return 'Administrador'
+  return 'Cidadão'
+}
+
 export default function ProfileScreen() {
   const { user, logout } = useAuth()
 
@@ -13,6 +19,8 @@ export default function ProfileScreen() {
     ])
   }
 
+  const isStaff = user?.role === 'ADMIN' || user?.role === 'MASTER'
+
   return (
     <ScrollView style={{ backgroundColor: '#F4F6FA' }} contentContainerStyle={{ padding: 20 }}>
       {/* Avatar */}
@@ -20,8 +28,8 @@ export default function ProfileScreen() {
         <View style={s.avatar}><Text style={s.avatarTxt}>{user?.name?.charAt(0).toUpperCase()}</Text></View>
         <Text style={s.name}>{user?.name}</Text>
         <Text style={s.email}>{user?.email}</Text>
-        {user?.role === 'ADMIN' && (
-          <View style={s.adminBadge}><Text style={s.adminBadgeTxt}>⚙️ Administrador</Text></View>
+        {isStaff && (
+          <View style={s.adminBadge}><Text style={s.adminBadgeTxt}>⚙️ {roleLabel(user?.role)}</Text></View>
         )}
       </View>
 
@@ -30,7 +38,7 @@ export default function ProfileScreen() {
         <Text style={s.cardTitle}>Informações da Conta</Text>
         <View style={s.row}><Text style={s.rowLabel}>Nome</Text><Text style={s.rowVal}>{user?.name}</Text></View>
         <View style={s.row}><Text style={s.rowLabel}>E-mail</Text><Text style={s.rowVal}>{user?.email}</Text></View>
-        <View style={s.row}><Text style={s.rowLabel}>Tipo</Text><Text style={s.rowVal}>{user?.role === 'ADMIN' ? 'Administrador' : 'Cidadão'}</Text></View>
+        <View style={s.row}><Text style={s.rowLabel}>Tipo</Text><Text style={s.rowVal}>{roleLabel(user?.role)}</Text></View>
       </View>
 
       {/* About */}
